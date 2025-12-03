@@ -4,7 +4,8 @@
     "supervisor_agent": "./supervisor.py:supervisor",
     "report_agent": "./fundamental_analyst.py:report_agent",
     "fundamental_query_agent": "./fundamental_queryer.py:fundamental_query_agent",
-    "query_agent": "./query_fixture_id.py:query_agent"
+    "query_agent": "./query_fixture_id.py:query_agent",
+    "test_agent": "./test_supervisor.py:supervisor"
   },
   "env": "./.env"
 }
