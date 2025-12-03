@@ -9,6 +9,14 @@ from pydantic import BaseModel, Field
 from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from typing import Dict, Any, Optional
+try:
+    import psycopg
+except Exception:
+    psycopg = None
+try:
+    import psycopg2
+except Exception:
+    psycopg2 = None
 from api_football_tools import get_fixture_head2head, get_home_last_10, get_away_last_10, get_injuries, get_fixture_basic_info, get_standing_home_info, get_standing_away_info
 
 def _get_conn():
@@ -105,7 +113,6 @@ prompt = """
 + "get_fixture_basic_info: 获取比赛基本信息."
 + "get_standing_home_info: 获取主队积分榜信息."
 + "get_standing_away_info: 获取客队积分榜信息."
-+ "get_fixture_odds: 获取比赛赔率信息."
 + "query_fixture_id_by_league: 根据联赛名称查询比赛ID."
 + "query_fixture_id_by_date: 根据日期查询比赛ID."
 + "query_fixture_id_by_team_name: 根据队伍名称查询比赛ID."
