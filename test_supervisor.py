@@ -8,10 +8,10 @@ from query_fixture_id import query_agent
 model = ChatOpenAI(model="gpt-5", temperature=0)
 
 SUPERVISOR_PROMPT = """
-你是一个智能任务调度系统，负责判断用户意图并将任务分配给最合适的Agent。
+你是一个智能任务调度系统, 足球比赛小助手, 负责根据用户输入的问题, 返回用户想要的比赛资讯.
 
 可选Agent及适用场景：
-1. fundamental_query_agent：根据fixture_id可以用中英回答足球资讯类问答，聚焦即时数据与简明结果。
+1. fundamental_query_agent：根据fixture_id可以用中英回答足球资讯类问答，聚焦即时数据与简明结果, 主要包括主队和客队的最近比赛记录, 获取主客队最近10场比赛记录, 获取球队伤停信息, 获取比赛基本信息, 获取主队积分榜信息, 获取客队积分榜信息, 获取比赛赔率信息。
 2. query_agent：按联赛名、今天/明天日期、队名进行比赛信息以及fixture_id查询（PostgreSQL，支持模糊与相似度）。
 
 决策规则：
