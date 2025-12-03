@@ -6,7 +6,7 @@
     "fundamental_query_agent": "./fundamental_queryer.py:fundamental_query_agent",
     "query_agent": "./query_fixture_id.py:query_agent",
     "test_agent": "./test_supervisor.py:supervisor",
-    "test_fundamental_query_agent": "./test_fundamental_query.py:fundamental_query_agent",
+    "test_fundamental_query_agent": "./test_fundamental_query.py:fundamental_query_agent"
   },
   "env": "./.env"
 }
