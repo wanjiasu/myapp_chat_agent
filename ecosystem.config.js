@@ -3,8 +3,8 @@ module.exports = {
     {
       name: "tele_agentchat",
       cwd: ".",
-      script: "env/bin/python",
-      args: "-m langgraph dev --host 0.0.0.0 --port 8005",
+      script: "env/bin/langgraph",
+      args: "dev --host 0.0.0.0 --port 8005",
       autorestart: true,
       watch: false,
       max_memory_restart: "512M",
