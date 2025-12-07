@@ -16,3 +16,4 @@ pandas
 pymysql
 scikit-learn
 langgraph-cli[inmem]
+psycopg[binary]
