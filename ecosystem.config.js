@@ -4,7 +4,7 @@ module.exports = {
       name: "tele_agentchat",
       cwd: "/Users/kuriball/Documents/MyProjects/work/agent_chat",
       script: "env/bin/python",
-      args: "-m langgraph dev --host 0.0.0.0 --port 8004",
+      args: "-m langgraph dev --host 0.0.0.0 --port 8005",
       autorestart: true,
       watch: false,
       max_memory_restart: "512M",
