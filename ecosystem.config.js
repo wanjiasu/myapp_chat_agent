@@ -2,7 +2,7 @@ module.exports = {
   apps: [
     {
       name: "tele_agentchat",
-      cwd: "/Users/kuriball/Documents/MyProjects/work/agent_chat",
+      cwd: ".",
       script: "env/bin/python",
       args: "-m langgraph dev --host 0.0.0.0 --port 8005",
       autorestart: true,
