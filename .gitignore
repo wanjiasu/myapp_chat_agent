@@ -25,3 +25,7 @@ venv/
 
 # log
 langgraph.log 
+logs/
+
+# output
+output/
