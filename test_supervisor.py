@@ -18,12 +18,7 @@ SUPERVISOR_PROMPT = """
 决策规则：
 1. 依据问题类型选择最匹配的Agent；一次仅选择一个。
 2. 当用户输入包含双方队名或出现“VS”时：首先路由到query_agent，并让其选取最匹配的一场（优先使用select_fixture_id_by_team_vs），在交接消息首行明确写出：fixture_id: <数字>。
-3. 若成功得到fixture_id，则根据用户想要获得的讯息或者询问用户想要哪些讯息去路由到fundamental_query_agent。
-
-结束规则（避免循环）：
-1. 最近一次调用是fundamental_query_agent且已直接回答用户关切，选择FINISH。
-2. 最近一次调用是query_agent且已明确提供fixture_id，但用户未提出更深入分析需求时，选择FINISH。
-3. 内容充分时严禁再次调用任何Agent。
+3. 若成功得到fixture_id（即历史消息中包含 "fixture_id: <数字>"），则路由到fundamental_query_agent，让其利用该ID回答用户关于比赛详情（实力、近况、伤停、战意等）的提问。
 
 从以下选项中选择一个：['fundamental_query_agent','query_agent','FINISH']
 """

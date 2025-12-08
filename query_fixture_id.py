@@ -110,8 +110,10 @@ prompt = """
 2. select_fixture_id_by_date_range：根据日期范围查询比赛ID（默认今起三天）
 3. select_fixture_id_by_league：根据联赛名称查询比赛ID
 输出规范：
-- 若查询包含双方队名或包含“VS”，优先调用select_fixture_id_by_team_vs，选取相似度最高的一场，并在首行明确输出：fixture_id: <数字>
-- 找到最相似的一条比赛，返回fixture_id和比赛详情让用户进行确认。
+- 若查询包含双方队名或包含“VS”，优先调用select_fixture_id_by_team_vs。
+- 工具会返回按相似度排序的比赛列表。请选择列表中的第一条（最相似的一条）作为目标比赛。
+- 必须在回复的首行明确输出：fixture_id: <数字>
+- 然后在后续行中列出该比赛的详情（日期、联赛、对阵双方）供用户确认。
 """
 
 
