@@ -13,7 +13,7 @@ SUPERVISOR_PROMPT = """
 
 可选Agent及适用场景：
 1. fundamental_query_agent：根据fixture_id可以用中英回答足球资讯类问答，聚焦即时数据与简明结果。
-2. query_agent：按联赛名、查询开始日期, 查询结束日期(默认为今明后三天)、队名进行比赛信息等查询获取fixture_id（PostgreSQL，支持模糊与相似度）。
+2. query_agent：按联赛名、查询日期范围(开始日期, 查询结束日期(默认为今明后三天))、队名进行比赛信息等查询获取fixture_id（PostgreSQL，支持模糊与相似度）。
 
 决策规则：
 1. 依据问题类型选择最匹配的Agent；一次仅选择一个。
