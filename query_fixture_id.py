@@ -50,44 +50,50 @@ def _json_dumps(data):
         return str(o)
     return json.dumps(data, ensure_ascii=False, default=_default)
 
-@tool("query_fixture_id_by_league", description="查询比赛ID")
-def query_fixture_id_by_league(query: str) -> str:
-    sql = 'SELECT fixture_id, league_name, teams_vs, fixture_date FROM api_football_fixtures WHERE league_name ILIKE %s ORDER BY similarity(league_name, %s) DESC NULLS LAST LIMIT 50'
-    res = _run_query(sql, [f"%{query}%", query])
-    return _json_dumps(res)
-    
-@tool("query_fixture_id_by_date", description="查询比赛ID")
-def query_fixture_id_by_date(query: str) -> str:
+def _parse_date(s: Optional[str]):
+    if not s:
+        return None
+    try:
+        return datetime.fromisoformat(s).date()
+    except Exception:
+        return None
+
+@tool("query_fixtures", description="按日期范围、联赛或队名对阵查询比赛")
+def query_fixtures(query_start_date: Optional[str] = None, query_end_date: Optional[str] = None, league_name: Optional[str] = None, team_vs_query: Optional[str] = None) -> str:
     tz = ZoneInfo("Asia/Shanghai")
     today = datetime.now(tz).date()
-    tomorrow = today + timedelta(days=1)
-    sql = 'SELECT fixture_id, league_name, teams_vs, fixture_date FROM api_football_fixtures WHERE fixture_date::date IN (%s, %s) ORDER BY fixture_date ASC LIMIT 100'
-    res = _run_query(sql, [today, tomorrow])
-    return _json_dumps(res)
-
-@tool("query_fixture_id_by_team_name", description="查询比赛ID")
-def query_fixture_id_by_team_name(query: str) -> str:
-    sql = 'SELECT fixture_id, league_name, teams_vs, fixture_date FROM api_football_fixtures WHERE teams_vs ILIKE %s ORDER BY similarity(teams_vs, %s) DESC NULLS LAST LIMIT 50'
-    res = _run_query(sql, [f"%{query}%", query])
+    start = _parse_date(query_start_date) or today
+    end = _parse_date(query_end_date) or (today + timedelta(days=2))
+    sql = 'SELECT fixture_id, league_name, teams_vs, fixture_date FROM api_football_fixtures WHERE 1=1'
+    params: list[Any] = []
+    sql += ' AND fixture_date::date BETWEEN %s AND %s'
+    params.extend([start, end])
+    if league_name:
+        sql += ' AND league_name ILIKE %s'
+        params.append(f"%{league_name}%")
+    if team_vs_query:
+        sql += ' AND teams_vs ILIKE %s'
+        params.append(f"%{team_vs_query}%")
+    if team_vs_query:
+        sql += ' ORDER BY similarity(teams_vs, %s) DESC NULLS LAST, fixture_date ASC LIMIT 100'
+        params.append(team_vs_query)
+    elif league_name:
+        sql += ' ORDER BY similarity(league_name, %s) DESC NULLS LAST, fixture_date ASC LIMIT 100'
+        params.append(league_name)
+    else:
+        sql += ' ORDER BY fixture_date ASC LIMIT 100'
+    res = _run_query(sql, params)
     return _json_dumps(res)
 
 prompt = """
-你是一个专业的足球比赛查询助手，能够根据用户的查询条件翻译成英文并返回相关的比赛信息。
+你是一个专业的足球比赛查询助手，能够根据用户的查询条件翻译成英文查询条件比如"homeA vs homeB", "league_name", "fixture_date"并返回相关的比赛信息。
 你可以使用的工具：
-1. query_fixture_id_by_league：根据联赛名称查询比赛ID
-2. query_fixture_id_by_date：根据日期查询比赛ID
-3. query_fixture_id_by_team_name：根据队伍名称查询比赛ID
+1. query_fixtures：根据日期范围、联赛名称、队名对阵综合查询比赛ID
 输出规范：
 - 若查询包含双方队名或包含“VS”，请优先选择相似度最高的一场比赛，并在首行明确输出：fixture_id: <数字>
-- 若有多条候选，仅返回最匹配的一条；同时给出简要信息：联赛、对阵、时间。
+- 若有多条候选，可以返回所有候选的fixture_id让用户进行确认。
+- 如果没查询到可以考虑扩大日期范围.
 """
 
-@tool("select_fixture_id_by_team_vs", description="根据队名对阵选择最匹配的一场比赛并返回ID")
-def select_fixture_id_by_team_vs(query: str) -> str:
-    sql = 'SELECT fixture_id, league_name, teams_vs, fixture_date, similarity(teams_vs, %s) AS sim FROM api_football_fixtures WHERE teams_vs ILIKE %s ORDER BY similarity(teams_vs, %s) DESC NULLS LAST LIMIT 1'
-    res = _run_query(sql, [query, f"%{query}%", query])
-    if isinstance(res, list) and res:
-        return _json_dumps(res[0])
-    return _json_dumps({})
 
-query_agent = create_react_agent(llm, [query_fixture_id_by_league, query_fixture_id_by_date, query_fixture_id_by_team_name, select_fixture_id_by_team_vs], prompt=prompt, name="query_agent")
+query_agent = create_react_agent(llm, [query_fixtures], prompt=prompt, name="query_agent")
